@@ -28,7 +28,7 @@ while True:
                         o = 0
                     added = 0
                 if "\n" in i:
-                    while o < 3 and o != 0:
+                    while o < 3 and (o != 0 or strings[o][-1] != " "):
                         strings[o] += [" "]
                         o += 1
                     o = 0
