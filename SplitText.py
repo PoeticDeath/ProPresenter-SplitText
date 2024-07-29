@@ -5,7 +5,7 @@ from time import sleep
 
 app = []; app = wx.App(None)
 dc = wx.ScreenDC()
-size = 275
+size = 250
 myFont = wx.Font(size, wx.DEFAULT, wx.NORMAL, wx.NORMAL, True)
 dc.SetFont(myFont)
 
@@ -29,7 +29,7 @@ def main(string):
             strings[o][-1] += i.split("\n")[1]
             added = len(i.split("\n")[1])
         else:
-            if strings[o][-1] != "":
+            if strings[o][-1] != "" and strings[o][-1] != " ":
                 strings[o][-1] += " " + i
             else:
                 strings[o][-1] = i
@@ -40,7 +40,7 @@ while True:
     try:
         laststring = ""
         while True:
-            size = 275
+            size = 250
             myFont.SetPointSize(size)
             dc.SetFont(myFont)
             contents = json.loads(urllib.request.urlopen("http://127.0.0.1:1025/v1/presentation/active").read())
@@ -50,6 +50,9 @@ while True:
                     slides += [p["text"]]
             slideindex = json.loads(urllib.request.urlopen("http://127.0.0.1:1025/v1/presentation/slide_index").read())
             string = slides[slideindex["presentation_index"]["index"]].replace("\n", " \n")
+            string = string.replace("From File Split1.txt", "")
+            string = string.replace("From File Split2.txt", "")
+            string = string.replace("From File Split3.txt", "")
             if string == laststring:
                 sleep(0.1)
                 continue
