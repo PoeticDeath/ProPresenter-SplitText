@@ -71,6 +71,9 @@ while True:
                 for p in range(0, len(strings[i])):
                     if strings[i][p] != " ":
                         strings[i][p] = strings[i][p].strip()
+            for i in range(len(strings[1])):
+                if strings[1][i] == " ":
+                    strings[0][i], strings[1][i] = strings[1][i], strings[0][i]
             one = open("Split1.txt", "w").write("\n".join(strings[0]))
             two = open("Split2.txt", "w").write("\n".join(strings[1]))
             three = open("Split3.txt", "w").write("\n".join(strings[2]))
