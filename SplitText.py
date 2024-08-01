@@ -10,12 +10,13 @@ myFont = wx.Font(size, wx.DEFAULT, wx.NORMAL, wx.NORMAL, True)
 dc.SetFont(myFont)
 
 def main(string):
-    strings = [[""], [""], [""]]
+    strings = [[" "], [" "], [" "]]
     splitstring = string.split(" ")
     o = 0
     added = 0
+    maxadd = 0
     for i in splitstring:
-        if dc.GetTextExtent(strings[o][-1] + " " + i).x > 1280 and added > 0:
+        if ((dc.GetTextExtent(strings[o][-1] + " " + i).x > 1280 and added > 10) or (strings[o][-1].count(" ") > 2)) and strings[o][-1][-1] != "'":
             strings[o] += [" "]
             o += 1
             if o > 2:
@@ -28,13 +29,19 @@ def main(string):
             o = 0
             strings[o][-1] += i.split("\n")[1]
             added = len(i.split("\n")[1])
+            size = dc.GetTextExtent(strings[o][-1]).x
+            if size > maxadd:
+                maxadd = size
         else:
-            if strings[o][-1] != "" and strings[o][-1] != " ":
+            if strings[o][-1] != " ":
                 strings[o][-1] += " " + i
             else:
                 strings[o][-1] = i
             added += len(i)
-    return strings
+            size = dc.GetTextExtent(strings[o][-1]).x
+            if size > maxadd:
+                maxadd = size
+    return strings, (maxadd + dc.GetTextExtent("_").x - 1) // dc.GetTextExtent("_").x
 
 while True:
     try:
@@ -57,13 +64,13 @@ while True:
                 sleep(0.1)
                 continue
             laststring = string
-            strings = main(string)
+            strings, maxadd = main(string)
             lines = max(len(strings[0]), len(strings[1]), len(strings[2]))
             while 2160 / dc.GetTextExtent("Test").y < lines:
                 size -= 1
                 myFont.SetPointSize(size)
                 dc.SetFont(myFont)
-                strings = main(string)
+                strings, maxadd = main(string)
                 lines = max(len(strings[0]), len(strings[1]), len(strings[2]))
             for i in range(0, len(strings)):
                 while len(strings[i]) < lines:
@@ -71,6 +78,7 @@ while True:
                 for p in range(0, len(strings[i])):
                     if strings[i][p] != " ":
                         strings[i][p] = strings[i][p].strip()
+                strings[i] += ["_" * maxadd]
             for i in range(len(strings[1])):
                 if strings[1][i] == " ":
                     strings[0][i], strings[1][i] = strings[1][i], strings[0][i]
