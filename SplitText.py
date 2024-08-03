@@ -68,7 +68,7 @@ while True:
             laststring = string
             strings, maxadd = main(string)
             for i in range(len(strings)):
-                while strings[i][-1] == " ":
+                while strings[i][-1] == " " and len(strings[i]) != 1:
                     strings[i].pop()
             lines = max(len(strings[0]), len(strings[1]), len(strings[2]))
             while y / dc.GetTextExtent("Test").y < lines:
@@ -77,7 +77,7 @@ while True:
                 dc.SetFont(myFont)
                 strings, maxadd = main(string)
                 for i in range(len(strings)):
-                    while strings[i][-1] == " ":
+                    while strings[i][-1] == " " and len(strings[i]) != 1:
                         strings[i].pop()
                 lines = max(len(strings[0]), len(strings[1]), len(strings[2]))
             for i in range(len(strings)):
