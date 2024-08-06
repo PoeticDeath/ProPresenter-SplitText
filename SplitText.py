@@ -19,7 +19,7 @@ def main(string):
     added = 0
     maxadd = 0
     for i in splitstring:
-        if ((dc.GetTextExtent(strings[o][-1] + " " + i).x > (x // screens) and added > 10) or (strings[o][-1].count(" ") > 2)) and strings[o][-1][-1] != "'":
+        if ((dc.GetTextExtent(strings[o][-1] + " " + i + " ").x > (x // screens) and added > 10) or (strings[o][-1].count(" ") > 2)) and strings[o][-1][-1] != "'":
             strings[o] += [" "]
             o += 1
             if o > (screens - 1):
