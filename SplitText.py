@@ -1,5 +1,7 @@
+import os
 import wx
 import json
+import tkinter as tk
 import urllib.request
 from time import sleep
 
@@ -11,6 +13,26 @@ screens = 3
 maxsize = size = 250
 myFont = wx.Font(size, wx.DEFAULT, wx.NORMAL, wx.NORMAL, True)
 dc.SetFont(myFont)
+
+if os.name != "nt":
+    root = tk.Tk()
+    root.geometry(f"{x}x{y}+5760+0")
+    root.config(bg = "#add")
+    root.wm_attributes("-transparentcolor", "#add")
+    root.overrideredirect(1)
+
+    T = []
+    for i in range(screens):
+        T += [tk.Text(root)]
+        T[i].config(bg = "#add", fg = "white", font = ("Arial", size), borderwidth = 0, wrap = "none")
+        T[i].pack()
+        T[i].place(x = (x // screens) * i, y = 0, width = x // screens, height = y)
+        Just = "center"
+        if i == 0:
+            Just = "right"
+        if i == screens - 1:
+            Just = "left"
+        T[i].tag_config("Just", justify = Just)
 
 def main(string):
     strings = [[" "] for i in range(screens)]
@@ -63,6 +85,8 @@ while True:
             for i in range(screens):
                 string = string.replace(f"From File Split{i + 1}.txt", "")
             if string == laststring:
+                if os.name != "nt":
+                    root.update()
                 sleep(0.1)
                 continue
             laststring = string
@@ -80,19 +104,29 @@ while True:
                     while strings[i][-1] == " " and len(strings[i]) != 1:
                         strings[i].pop()
                 lines = max(len(strings[0]), len(strings[1]), len(strings[2]))
+            while dc.GetTextExtent("_" * maxadd).x > x // screens:
+                size -= 1
+                myFont.SetPointSize(size)
+                dc.SetFont(myFont)
             for i in range(len(strings)):
                 while len(strings[i]) < lines:
                     strings[i] += [" "]
                 for p in range(len(strings[i])):
                     if strings[i][p] != " ":
                         strings[i][p] = strings[i][p].strip()
-                strings[i] += ["_" * maxadd]
+                if os.name == "nt":
+                    strings[i] += ["_" * maxadd]
             if screens == 3:
                 for i in range(len(strings[1])):
                     if strings[1][i] == " ":
                         strings[0][i], strings[1][i] = strings[1][i], strings[0][i]
             for i in range(screens):
-                one = open(f"Split{i + 1}.txt", "w").write("\n".join(strings[i]))
+                if os.name == "nt":
+                    one = open(f"Split{i + 1}.txt", "w").write("\n".join(strings[i]))
+                else:
+                    T[i].delete("1.0", tk.END)
+                    T[i].config(font = ("Arial", size))
+                    T[i].insert(tk.END, "\n".join(strings[i]), "Just")
             sleep(0.1)
     except Exception:
         pass
