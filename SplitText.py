@@ -67,9 +67,24 @@ while True:
             font = ft.Font(font = (fontf, size))
             contents = json.loads(urllib.request.urlopen("http://127.0.0.1:1025/v1/presentation/active").read())
             slides = []
-            for i in contents["presentation"]["groups"]:
-                for p in i["slides"]:
-                    slides += [p["text"]]
+            try:
+                empty = "Not Split.pro" in contents["presentation"]["presentation_path"]
+                for i in contents["presentation"]["groups"]:
+                    for p in i["slides"]:
+                        slides += [p["text"]]
+            except TypeError:
+                empty = True
+            if empty:
+                laststring = string = ""
+                for i in range(screens):
+                    root.wm_attributes("-transparent", 0)
+                    T[i].config(state = "normal")
+                    T[i].delete("1.0", tk.END)
+                    T[i].config(state = "disabled")
+                    root.wm_attributes("-transparent", 1)
+                root.update()
+                sleep(0.1)
+                continue
             slideindex = json.loads(urllib.request.urlopen("http://127.0.0.1:1025/v1/presentation/slide_index").read())
             string = slides[slideindex["presentation_index"]["index"]].replace("\n", " \n")
             if string == laststring:
