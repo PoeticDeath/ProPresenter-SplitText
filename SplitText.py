@@ -14,6 +14,7 @@ root = tk.Tk()
 root.config(bg = "systemTransparent")
 root.wm_attributes("-transparent", 1)
 root.overrideredirect(1)
+root.wm_attributes("-topmost", 1)
 
 font = ft.Font(font = (fontf, size))
 
@@ -69,12 +70,10 @@ while True:
             slides = []
             try:
                 empty = "Not Split.pro" in contents["presentation"]["presentation_path"]
-                for i in contents["presentation"]["groups"]:
-                    for p in i["slides"]:
-                        slides += [p["text"]]
             except TypeError:
                 empty = True
-            if empty:
+            announcementindex = json.loads(urllib.request.urlopen("http://127.0.0.1:1025/v1/announcement/slide_index?chuncked=false").read())
+            if empty or announcementindex["announcement_index"] != None:
                 laststring = string = ""
                 for i in range(screens):
                     root.wm_attributes("-transparent", 0)
@@ -85,6 +84,9 @@ while True:
                 root.update()
                 sleep(0.1)
                 continue
+            for i in contents["presentation"]["groups"]:
+                for p in i["slides"]:
+                    slides += [p["text"]]
             slideindex = json.loads(urllib.request.urlopen("http://127.0.0.1:1025/v1/presentation/slide_index").read())
             string = slides[slideindex["presentation_index"]["index"]].replace("\n", " \n")
             if string == laststring:
